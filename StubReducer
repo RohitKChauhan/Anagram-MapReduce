@@ -1,0 +1,37 @@
+package Anagram;
+import java.io.IOException;
+
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class StubReducer extends Reducer<Text, Text, Text, Text> {
+
+  @Override
+  public void reduce(Text key, Iterable<Text> values, Context context)
+      throws IOException, InterruptedException {
+	  
+	  String finalValue="";	  
+	  for(Text anagramValues:values)
+	  {		 
+		  //Logic to not print same value twice or more
+		  if(finalValue.length()==0) 
+			{			  
+				finalValue= finalValue + " " + anagramValues;
+			}
+			else
+			{
+				if(finalValue.indexOf(anagramValues.toString())==-1)
+				{
+					finalValue= finalValue + " " + anagramValues;
+				}
+			}
+	  }	  	  
+	  System.out.println("AnagramReducer");
+	  
+	  if(finalValue.trim().contains(" "))
+		  context.write(new Text(finalValue),new Text(""));
+  }
+}
